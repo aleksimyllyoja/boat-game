@@ -4,8 +4,8 @@
 		<meta charset=utf-8>
 		<title>Sets</title>
 		<style>
-			body { margin: 0; }
-			canvas { width: 100%; height: 100% }
+			* { margin: 0; padding: 0; overflow: hidden; }
+			canvas { width: 100vw; height: 100vh; }
 		</style>
 	</head>
 	<body>
@@ -25,30 +25,28 @@
 		<script id="fragmentShader" type="x-shader/x-fragment">
 			varying vec2 vUv;
 			uniform float time;
-			float c = 0.0;
-			float mx, my, c2, f, d, a;
+			float r = 1.0;
+			float g = 1.0;
+			float b = 1.0;
+			float a, f;
 			bool q;
 
 			void main()	{
 				vec2 p = -1.0 + 2.0 * vUv;
 
-				a = .9-sqrt(p.x*p.x+p.y*p.y)*sqrt(p.x*p.x+p.y*p.y);
-
-				mx = mod(p.x*100.0+cos(time/100.0-p.x*50.0)*2.0+time*0.5, 20.0);
-				my = mod(p.y*100.0+sin(time/100.0-p.y*50.0)*2.0+time*0.5, 30.0);
-
-				float ty = 10.0;
-				float tx = 10.0;
-
-				f = sqrt((mx-tx)*(mx-tx)+(my-ty)*(my+ty));
-
-				if(f <= 13.0) {
-					c = 0.9;
-				} else {
-					a = 0.0;
+				a = .8-pow(sqrt(p.x*p.x+p.y*p.y), 2.0);
+				f = mod((a+time/100.0)*50.0, 6.0);
+				if(f < 2.0) {
+					b = 1.0;
+					r = 0.4;
+					g = 0.4;
 				}
-				c2 = 0.8;
-				gl_FragColor = vec4(0.5, c2, c, a);
+
+				if(a > 0.6) {
+					a = 1.0;
+				}
+
+				gl_FragColor = vec4(r, g, b, a);
 			}
 		</script>
 

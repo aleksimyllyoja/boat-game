@@ -1,7 +1,7 @@
 var scene = new THREE.Scene();
 
 camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
-camera.position.set(300, 100, 300);
+camera.position.set(0, 100, 400);
 camera.lookAt(0, 0, 0);
 
 scene.background = new THREE.Color( 0xffffff );
@@ -10,9 +10,24 @@ var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild(renderer.domElement);
 
-controls = new THREE.OrbitControls( camera, renderer.domElement );
+var geometry = new THREE.PlaneGeometry(900, 900, 0);
 
-var geometry = new THREE.PlaneGeometry(400, 400, 0);
+var uniforms = {
+  time: { value: 1.0 }
+};
+
+var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+material.transparent = true;
+
+var sky = new THREE.Mesh( geometry, material );
+
+sky.position.set(0, 0, -250);
+
+scene.add(sky);
+
+//scene.fog = new THREE.FogExp2( 0xffffff, 0.0025 );
+
+var geometry = new THREE.PlaneGeometry(1200, 1200, 0);
 
 var uniforms = {
   time: { value: 1.0 }
@@ -37,10 +52,11 @@ light = new THREE.HemisphereLight(0xffffff, 0x444444);
 
 var loader = new THREE.GLTFLoader();
 
+var boat;
 // Load a glTF resource
 loader.load(
 	// resource URL
-	'/data/Sailboat.gltf',
+	'/data/HouseBoat_1384.gltf',
 	// called when the resource is loaded
 	function ( gltf ) {
 
@@ -51,17 +67,19 @@ loader.load(
 		gltf.scenes; // Array<THREE.Scene>
 		gltf.cameras; // Array<THREE.Camera>
 		gltf.asset; // Object
-    console.log(gltf);
 
-    gltf.scene.children[0].position.x = -80;
-    gltf.scene.children[0].position.y = -4;
-    gltf.scene.children[0].position.z = 140;
+    boat = gltf.scene.children[0];
 
-    gltf.scene.children[0].rotation.y = Math.PI/4.0
+    boat.position.set(0, -3, 0);
+    boat.scale.set(0.4, 0.4, 0.4);
+    boat.rotation.y = -1.5;
+    /*
+    gltf.scene.children[0].position.x = 0;
+    gltf.scene.children[0].position.y = -5;
+    gltf.scene.children[0].position.z = 0;
+    */
 
-    gltf.scene.children[0].scale.x = 0.1;
-    gltf.scene.children[0].scale.y = 0.1;
-    gltf.scene.children[0].scale.z = 0.1;
+    //boat.rotation.y = Math.PI/;
 	},
 	// called while loading is progressing
 	function ( xhr ) {
@@ -77,9 +95,32 @@ loader.load(
 	}
 );
 
+var cg = new THREE.CubeGeometry(10, 10, 10);
+
+var material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+var cube = new THREE.Mesh( cg, material );
+
+cube.position.set(10, 100, -250);
+
+scene.add(cube);
+
+
 function animate( timestamp ) {
   requestAnimationFrame( animate );
   uniforms.time.value = timestamp / 1000;
   renderer.render( scene, camera );
+
+//  if(d != 0) boat.rotation.y = Math.min(boat.rotation.y+0.05, -0.8);
 }
 animate();
+
+
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+    var keyCode = event.which;
+    if (keyCode == 37) {
+      boat.rotation.y = Math.min(boat.rotation.y+0.05, -0.8);
+    } else if (keyCode == 39) {
+      boat.rotation.y = Math.max(boat.rotation.y-0.05, -2.2);
+    }
+};
