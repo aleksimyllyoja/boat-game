@@ -23,14 +23,19 @@ var sky = new THREE.Mesh( geometry, material );
 
 sky.position.set(0, 0, -250);
 
-scene.add(sky);
+//scene.add(sky);
 
-//scene.fog = new THREE.FogExp2( 0xffffff, 0.0025 );
+scene.fog = new THREE.FogExp2( 0xffffff, 0.0015 );
 
 var geometry = new THREE.PlaneGeometry(1200, 1200, 0);
 
 var uniforms = {
-  time: { value: 1.0 }
+  time: {
+    value: 1.0
+  },
+  speed: {
+    value: 0.0
+  }
 };
 
 var material = new THREE.ShaderMaterial({
@@ -53,6 +58,7 @@ light = new THREE.HemisphereLight(0xffffff, 0x444444);
 var loader = new THREE.GLTFLoader();
 
 var boat;
+var loaded = false;
 // Load a glTF resource
 loader.load(
 	// resource URL
@@ -72,7 +78,7 @@ loader.load(
 
     boat.position.set(0, -3, 0);
     boat.scale.set(0.4, 0.4, 0.4);
-    boat.rotation.y = -1.5;
+    boat.rotation.y = -1.6;
     /*
     gltf.scene.children[0].position.x = 0;
     gltf.scene.children[0].position.y = -5;
@@ -80,6 +86,7 @@ loader.load(
     */
 
     //boat.rotation.y = Math.PI/;
+    loaded = true;
 	},
 	// called while loading is progressing
 	function ( xhr ) {
@@ -95,32 +102,79 @@ loader.load(
 	}
 );
 
-var cg = new THREE.CubeGeometry(10, 10, 10);
+var cg = new THREE.CubeGeometry(10, 50, 10);
 
 var material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 var cube = new THREE.Mesh( cg, material );
 
-cube.position.set(10, 100, -250);
+cube.position.set(10, 0, -250);
+cube.rotation.set(0.2, 0.4, 0.9);
 
 scene.add(cube);
 
+var keys = {};
 
 function animate( timestamp ) {
-  requestAnimationFrame( animate );
+
+  if(loaded) {
+    if(keys[37]) {
+      boat.rotation.y = Math.min(-1.2, boat.rotation.y+0.002);
+      boat.rotation.x = Math.min(0.2, boat.rotation.x+0.001);
+      boat.rotation.z = Math.max(-0.01, boat.rotation.z-0.001);
+      uniforms.speed.value += 0.01;
+
+      uniforms.speed.value = Math.min(1, uniforms.speed.value+0.01);
+
+
+      cube.position.x += 0.4;
+
+    } else if(keys[39]) {
+      boat.rotation.y = Math.max(-1.9, boat.rotation.y-0.002);
+      boat.rotation.x = Math.min(0.2, boat.rotation.x+0.001);
+      boat.rotation.z = Math.max(-0.01, boat.rotation.z-0.001);
+
+      uniforms.speed.value = Math.min(1, uniforms.speed.value+0.01);
+
+      cube.position.x -= 0.4;
+    } else {
+      var d = -1.55-boat.rotation.y;
+      var dx = boat.rotation.x;
+      var dz = boat.rotation.z;
+      var ds = uniforms.speed.value;
+
+      if(Math.abs(d) > 0.01) {
+        boat.rotation.y += d/100;
+      }
+
+      if(Math.abs(dx) > 0.01) {
+        boat.rotation.x -= dx/100;
+      }
+
+      if(Math.abs(dz) > 0.01) {
+        boat.rotation.z -= dz/100;
+      }
+
+      if(Math.abs(ds) > 0.01) {
+        uniforms.speed.value -= ds/100;
+      }
+    }
+  }
+
+  cube.position.z += 0.6;
+
   uniforms.time.value = timestamp / 1000;
   renderer.render( scene, camera );
-
-//  if(d != 0) boat.rotation.y = Math.min(boat.rotation.y+0.05, -0.8);
+  requestAnimationFrame(animate);
 }
 animate();
 
-
 document.addEventListener("keydown", onDocumentKeyDown, false);
 function onDocumentKeyDown(event) {
-    var keyCode = event.which;
-    if (keyCode == 37) {
-      boat.rotation.y = Math.min(boat.rotation.y+0.05, -0.8);
-    } else if (keyCode == 39) {
-      boat.rotation.y = Math.max(boat.rotation.y-0.05, -2.2);
-    }
+    keys[event.which] = true;
+};
+
+
+document.addEventListener("keyup", onDocumentKeyUp, false);
+function onDocumentKeyUp(event) {
+    keys[event.which] = false;
 };

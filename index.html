@@ -12,7 +12,6 @@
 		<script src="js/three.js"></script>
 		<script src="js/GLTFLoader.js"></script>
 		<script src="js/OrbitControls.js"></script>
-
 		<script id="vertexShader" type="x-shader/x-vertex">
 			varying vec2 vUv;
 			void main()	{
@@ -25,25 +24,26 @@
 		<script id="fragmentShader" type="x-shader/x-fragment">
 			varying vec2 vUv;
 			uniform float time;
+			uniform float speed;
 			float r = 1.0;
 			float g = 1.0;
 			float b = 1.0;
-			float a, f;
+			float a, f, t;
 			bool q;
 
 			void main()	{
 				vec2 p = -1.0 + 2.0 * vUv;
 
-				a = .8-pow(sqrt(p.x*p.x+p.y*p.y), 2.0);
-				f = mod((a+time/100.0)*50.0, 6.0);
+				t = 1.0-pow(sqrt(p.x*p.x+p.y*p.y), 2.0);
+				f = mod((t+time/(100.0))*50.0, 6.0);
 				if(f < 2.0) {
-					b = 1.0;
-					r = 0.4;
-					g = 0.4;
+					b = 0.8+0.2*speed;
+					r = 0.70;
+					g = 0.70;
 				}
 
-				if(a > 0.6) {
-					a = 1.0;
+				if(t > 0.7) {
+					a = 0.5;
 				}
 
 				gl_FragColor = vec4(r, g, b, a);
