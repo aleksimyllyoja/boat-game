@@ -20,6 +20,9 @@ var uniforms = {
   },
   speed: {
     value: 0.0
+  },
+  rotation: {
+    value: 0.0
   }
 };
 
@@ -61,9 +64,9 @@ loader.load(
 
     boat = gltf.scene.children[0];
 
-    boat.position.set(0, -3, 0);
+    boat.position.set(2, -3, 0);
     boat.scale.set(0.4, 0.4, 0.4);
-    boat.rotation.y = -1.6;
+    boat.rotation.y = -1.55;
 
     loaded = true;
 	},
@@ -81,37 +84,15 @@ loader.load(
 	}
 );
 
-var cg = new THREE.CylinderGeometry(1, 1, 30, 8, 1, false, 0, 2*Math.PI);
-
-var material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-var cube = new THREE.Mesh( cg, material );
-
-cube.position.set(10, 5, -950);
-cube.rotation.set(0.2, 0.4, 0.1);
-
-scene.add(cube);
-
 var keys = {};
 
 var throttle = 0;
-
-function resetCube() {
-  cube.position.set(Math.cos(Math.random()*2*Math.PI)*100, 0, -550);
-  cube.rotation.set(0.2, 0.4, Math.cos(Math.random()*2*Math.PI)*0.2);
-  if(Math.random() < 0.5) {
-    cube.material = new THREE.MeshBasicMaterial( { color: 0x00ee00 } );
-  } else {
-    cube.material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-  }
-}
-
-var sinkSpeed = 0;
 
 function animate( timestamp ) {
 
   if(loaded) {
     if(keys[37]) {
-      boat.rotation.y = Math.min(-1.2, boat.rotation.y+0.01);
+      boat.rotation.y = Math.min(-1.2, boat.rotation.y+0.002);
       boat.rotation.x = Math.min(0.2, boat.rotation.x+0.001);
       boat.rotation.z = Math.max(-0.01, boat.rotation.z-0.001);
       uniforms.speed.value += 0.01;
@@ -120,19 +101,15 @@ function animate( timestamp ) {
 
       camera.position.z = Math.min(390, camera.position.z+0.2);
 
-      cube.position.x += 0.4;
-
     }
     if(keys[39]) {
-      boat.rotation.y = Math.max(-1.9, boat.rotation.y-0.01);
+      boat.rotation.y = Math.max(-1.9, boat.rotation.y-0.002);
       boat.rotation.x = Math.min(0.2, boat.rotation.x+0.001);
       boat.rotation.z = Math.max(-0.01, boat.rotation.z-0.001);
 
       uniforms.speed.value = Math.min(1, uniforms.speed.value+0.01);
 
       camera.position.z = Math.min(390, camera.position.z+0.2);
-
-      cube.position.x -= 0.4;
 
     }
     if(keys[38]) {
@@ -157,12 +134,14 @@ function animate( timestamp ) {
         boat.rotation.y += d/100;
       }
 
-      if(Math.abs(dx) > 0.01) {
+      if(Math.abs(dx) > 0.001) {
         boat.rotation.x -= dx/100;
       }
 
       if(Math.abs(dz) > 0.01) {
         boat.rotation.z -= dz/100;
+      } else {
+        boat.rotation.z = 0.0;
       }
 
       if(Math.abs(ds) > 0.01) {
@@ -178,30 +157,9 @@ function animate( timestamp ) {
       }
     }
 
-    if(cube.position.z >= 40) {
-      //resetCube();
-      sinkSpeed = 0.5;
-    }
+    uniforms.rotation.value = boat.rotation.y+1.55;
 
-    if(sinkSpeed > 0) {
-      boat.rotation.x = Math.min(boat.rotation.x+0.03, Math.PI/2.0);
-      boat.position.y -= sinkSpeed;
-    }
-
-    if(boat.position.y < -200) {
-      boat.position.y = 0;
-      boat.rotation.x = 0;
-      sinkSpeed = 0;
-
-      resetCube();
-    }
-  }
-
-  cube.position.z += 1.0+throttle;
-  cube.position.y = 5+Math.cos(timestamp/200)*1;
-
-  if(Math.sqrt(Math.pow(cube.position.z, 2) + Math.pow(cube.position.x, 2)) <= 30) {
-     resetCube();
+    boat.position.y = -3+Math.cos(timestamp/400)*1;
   }
 
   uniforms.time.value = timestamp / 1000;

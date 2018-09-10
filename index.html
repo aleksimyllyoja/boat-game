@@ -3,6 +3,7 @@
 	<head>
 		<meta charset=utf-8>
 		<title>Sets</title>
+
 		<style>
 			* { margin: 0; padding: 0; overflow: hidden; }
 			canvas { width: 100vw; height: 100vh; }
@@ -25,31 +26,39 @@
 			varying vec2 vUv;
 			uniform float time;
 			uniform float speed;
-			float r = 1.0;
-			float g = 1.0;
+			uniform float rotation;
+			float r = .96;
+			float g = .91;
 			float b = 1.0;
-			float a, f, t;
+			float a, f, t, d, x, y;
 			bool q;
 
 			void main()	{
 				vec2 p = -1.0 + 2.0 * vUv;
 
-				t = 1.0-pow(sqrt(p.x*p.x+p.y*p.y), 2.0);
-				f = mod((t+time/(200.0))*50.0, 6.0);
-				if(f < 2.0) {
-					b = 0.8+0.2*speed;
+				float cx = 0.08;
+				float cy = -0.01;
+				t = 1.0-pow(sqrt(pow(cx-p.x, 2.0)+pow(cy-p.y, 2.0)), 2.0);
+				//t = cos(t)*3.0;
+				//f = mod((t+time/(200.0))*50.0, 6.0);
+
+				float xm = (0.01-(1.0+cos(p.y*100.0+time*2.0+speed*0.2))*0.002);
+				float ym = p.y;
+
+				float phi = rotation*1.0+(speed*p.y*rotation*5.0);
+				x = cos(phi)*p.x+p.y*sin(phi);
+				y = -sin(phi)*p.x+p.y*cos(phi);
+
+				if(abs(x-rotation*0.01) < xm && y < -0.0001) {
+					b = 0.8+0.8*speed;
 					r = 0.70;
 					g = 0.70;
-					a = t-.6;
-				} else {
-					a = 0.7;
 				}
 
+				a = 1.0-sqrt(pow(p.x, 2.0)+pow(p.y, 2.0))*4.0;
 				gl_FragColor = vec4(r, g, b, a);
 			}
 		</script>
-
-
 		<script src="js/game.js"></script>
 	</body>
 </html>
