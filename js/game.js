@@ -118,7 +118,7 @@ function animate( timestamp ) {
 
       uniforms.speed.value = Math.min(1, uniforms.speed.value+0.01);
 
-      camera.position.z = Math.min(390, camera.position.z+0.5);
+      camera.position.z = Math.min(390, camera.position.z+0.2);
 
       cube.position.x += 0.4;
 
@@ -130,7 +130,7 @@ function animate( timestamp ) {
 
       uniforms.speed.value = Math.min(1, uniforms.speed.value+0.01);
 
-      camera.position.z = Math.min(390, camera.position.z+0.5);
+      camera.position.z = Math.min(390, camera.position.z+0.2);
 
       cube.position.x -= 0.4;
 
