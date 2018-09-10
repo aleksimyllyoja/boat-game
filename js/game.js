@@ -47,7 +47,7 @@ var loaded = false;
 // Load a glTF resource
 loader.load(
 	// resource URL
-	'/data/HouseBoat_1384.gltf',
+	'data/HouseBoat_1384.gltf',
 	// called when the resource is loaded
 	function ( gltf ) {
 
@@ -186,6 +186,14 @@ function animate( timestamp ) {
     if(sinkSpeed > 0) {
       boat.rotation.x = Math.min(boat.rotation.x+0.03, Math.PI/2.0);
       boat.position.y -= sinkSpeed;
+    }
+
+    if(boat.position.y < -200) {
+      boat.position.y = 0;
+      boat.rotation.x = 0;
+      sinkSpeed = 0;
+
+      resetCube();
     }
   }
 
