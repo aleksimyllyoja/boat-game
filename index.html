@@ -30,6 +30,7 @@
 			float r = .96;
 			float g = .91;
 			float b = 1.0;
+			float ra = 5.0;
 			float a, f, t, d, x, y;
 			bool q;
 
@@ -38,11 +39,9 @@
 
 				float cx = 0.08;
 				float cy = -0.01;
-				t = 1.0-pow(sqrt(pow(cx-p.x, 2.0)+pow(cy-p.y, 2.0)), 2.0);
-				//t = cos(t)*3.0;
-				//f = mod((t+time/(200.0))*50.0, 6.0);
-
-				float xm = (0.01-(1.0+cos(p.y*100.0+time*2.0+speed*0.2))*0.002);
+				d = sqrt(pow(cx-p.x, 2.0)+pow(cy-p.y, 2.0));
+				t = 1.0-pow(d, 2.0);
+				float xm = (0.01-(1.0+cos(p.y*100.0+time*2.0+speed*0.2))*(0.02*d));
 				float ym = p.y;
 
 				float phi = rotation*1.0+(speed*p.y*rotation*5.0);
@@ -50,12 +49,12 @@
 				y = -sin(phi)*p.x+p.y*cos(phi);
 
 				if(abs(x-rotation*0.01) < xm && y < -0.0001) {
-					b = 0.8+0.8*speed;
+					b = 0.80+speed/7.0;
 					r = 0.70;
 					g = 0.70;
 				}
 
-				a = 1.0-sqrt(pow(p.x, 2.0)+pow(p.y, 2.0))*4.0;
+				a = 1.0-sqrt(pow(p.x, 2.0)+pow(p.y, 2.0))*ra;
 				gl_FragColor = vec4(r, g, b, a);
 			}
 		</script>
