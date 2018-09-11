@@ -2,10 +2,14 @@
 <html>
 	<head>
 		<meta charset=utf-8>
-		<title>Sets</title>
+		<title>Boat Game</title>
 
 		<style>
 			* { margin: 0; padding: 0; overflow: hidden; }
+			body {
+				--background: #ffa;
+				background: linear-gradient(to bottom, #dfeeff 0%, #ffffff 27%, #ffffff 100%);
+			}
 			canvas { width: 100vw; height: 100vh; }
 		</style>
 	</head>
@@ -37,9 +41,7 @@
 			void main()	{
 				vec2 p = -1.0 + 2.0 * vUv;
 
-				float cx = 0.08;
-				float cy = -0.01;
-				d = sqrt(pow(cx-p.x, 2.0)+pow(cy-p.y, 2.0));
+				d = sqrt(pow(p.x, 2.0)+pow(p.y, 2.0));
 				t = 1.0-pow(d, 2.0);
 				float xm = ((0.005+d*0.09)-(1.0+cos(p.y*100.0+time*2.0+speed*0.2))*(0.02*d));
 				float ym = p.y;
