@@ -41,7 +41,7 @@
 				float cy = -0.01;
 				d = sqrt(pow(cx-p.x, 2.0)+pow(cy-p.y, 2.0));
 				t = 1.0-pow(d, 2.0);
-				float xm = (0.01-(1.0+cos(p.y*100.0+time*2.0+speed*0.2))*(0.02*d));
+				float xm = ((0.005+d*0.09)-(1.0+cos(p.y*100.0+time*2.0+speed*0.2))*(0.02*d));
 				float ym = p.y;
 
 				float phi = rotation*1.0+(speed*p.y*rotation*5.0);
