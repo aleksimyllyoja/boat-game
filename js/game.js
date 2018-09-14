@@ -1,5 +1,5 @@
 var scene = new THREE.Scene();
-//scene.fog = new THREE.FogExp2( 0xffffff, 0.0025);
+scene.fog = new THREE.FogExp2( 0xffffff, 0.0025);
 
 var camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 1, 10000);
 camera.position.set(0, -300, 140);
