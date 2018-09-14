@@ -1,5 +1,5 @@
 var scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2( 0xffffff, 0.0025);
+//scene.fog = new THREE.FogExp2( 0xffffff, 0.0025);
 
 var camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 1, 10000);
 camera.position.set(0, -300, 140);
@@ -62,13 +62,6 @@ loader.load(
 	}
 );
 
-var geometry = new THREE.BoxBufferGeometry( 4, 4, 4 );
-var material = new THREE.MeshBasicMaterial( { color: 0xff0000, transparent: true } );
-var mesh = new THREE.Mesh( geometry, material );
-mesh.position.set(0, 0, -200);
-scene.add(mesh);
-
-var course = 0;
 var keys = {};
 var rotationSpeed = 0.002;
 var maxRotation = 0.2;
@@ -101,12 +94,6 @@ function rockTheBoat(timestamp) {
   boat.position.z = -2+Math.cos(timestamp/400)*1-1;
 }
 
-/*
-function isBehindBoat(obj) {
-  if obj.position.x
-}
-*/
-
 var ARROW_LEFT = 37;
 var ARROW_RIGHT = 39;
 var ARROW_UP = 38;
@@ -127,6 +114,7 @@ function handleKeys() {
   if(!keys[ARROW_LEFT] && !keys[ARROW_RIGHT] && !keys[ARROW_UP]) {
       var dy = Math.PI/2+boat.rotation.y;
       var ds = uniforms.speed.value;
+      acc = new THREE.Vector2(0, 0);
 
       if(Math.abs(dy) > 0.0001) {
         boat.rotation.y -= dy/100;
@@ -139,24 +127,21 @@ function handleKeys() {
     }
 }
 
-var boatSpeed = -0.14;
-
-function moveTheBoat() {
+function moveTheBoat(timestamp) {
   uniforms.rotation.value = boat.rotation.y+Math.PI/2;
-  ocean.rotation.z += (boat.rotation.y+Math.PI/2.0)*0.005;
-  ocean.position.z += boatSpeed*Math.cos(ocean.rotation.z);
-  ocean.position.x += boatSpeed*Math.sin(ocean.rotation.z);
-}
+  ocean.rotation.z += 0.01*(boat.rotation.y+Math.PI/2);
 
-console.log(ocean.position);
+  var c = ocean.rotation.z+Math.PI/2;
+  ocean.position.x += 0.1*Math.cos(c);
+  ocean.position.z += -0.1*Math.sin(c);
+}
 
 function animate( timestamp ) {
   if(loaded) {
     handleKeys();
 
     rockTheBoat(timestamp);
-    moveTheBoat();
-
+    moveTheBoat(timestamp);
   }
 
   uniforms.time.value = timestamp/1000;
